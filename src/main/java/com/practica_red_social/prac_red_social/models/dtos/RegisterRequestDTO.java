@@ -1,0 +1,28 @@
+package com.practica_red_social.prac_red_social.models.dtos;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class RegisterRequestDTO {
+
+    @Email
+    @NotNull
+    private String email;
+
+    @NotNull
+    @Size(min=2, max=25)
+    private String username;
+
+    @NotNull
+    @Size(min=7, max=50)
+    private String password;
+
+}
