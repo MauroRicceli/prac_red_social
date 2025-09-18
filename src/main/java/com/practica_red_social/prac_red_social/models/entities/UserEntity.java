@@ -41,7 +41,7 @@ public class UserEntity {
     private int edad;
 
     @NotNull
-    private Timestamp createdAt;
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;

@@ -16,7 +16,7 @@ public class TokenEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    public enum TokenType{
+    public enum TokenType {
         BEARER
     }
 
@@ -26,14 +26,12 @@ public class TokenEntity {
     @Enumerated(EnumType.STRING)
     private TokenType tokenType = TokenType.BEARER;
 
-    @Column(unique=true)
+    @Column(unique = true)
     @NotNull
     private String token;
 
-    @Column(name = "user")
+    @JoinColumn(name = "user_id")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity usuarioPertenece;
-
-
 }

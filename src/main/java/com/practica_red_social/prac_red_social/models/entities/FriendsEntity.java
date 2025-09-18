@@ -3,7 +3,6 @@ package com.practica_red_social.prac_red_social.models.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.apache.catalina.User;
 
 @Entity
 @NoArgsConstructor
@@ -20,9 +19,11 @@ public class FriendsEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id_x")
     private UserEntity userX;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id_y")
     private UserEntity userY;
 }

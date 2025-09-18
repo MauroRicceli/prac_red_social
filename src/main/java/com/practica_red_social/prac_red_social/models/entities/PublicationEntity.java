@@ -24,7 +24,7 @@ public class PublicationEntity {
     @NotNull
     private int likes = 0;
 
-    @Column(name="user")
+    @JoinColumn(name="user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity userPertenece;
 
