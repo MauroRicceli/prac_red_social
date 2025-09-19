@@ -26,7 +26,7 @@ public class TokenEntity {
     @Enumerated(EnumType.STRING)
     private TokenType tokenType = TokenType.BEARER;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 2000)
     @NotNull
     private String token;
 

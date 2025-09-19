@@ -1,15 +1,13 @@
 package com.practica_red_social.prac_red_social.controllers;
 
 import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
 import com.practica_red_social.prac_red_social.services.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,7 +17,12 @@ public class AuthController {
     private final AuthorizationService authorizationService;
 
     @PutMapping(value="/register",consumes = "application/json", produces = "application/json")
-    public ResponseEntity<TokenEntity> register(@RequestBody RegisterRequestDTO register){
-        return new ResponseEntity<>(, HttpStatus.ACCEPTED);
+    public ResponseEntity<ResponseTokenDTO> register(@RequestBody RegisterRequestDTO register){
+        return new ResponseEntity<>(authorizationService.register(register), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping(value="/test", produces = "application/json")
+    public ResponseEntity<String> testing(){
+        return new ResponseEntity<>(authorizationService.test(), HttpStatus.ACCEPTED);
     }
 }

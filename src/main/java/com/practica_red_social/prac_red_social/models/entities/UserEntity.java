@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Table(name="usuarios")
 public class UserEntity {
 
-    private enum UserRole{
+    public enum UserRole{
         ADMIN, STANDARD
     }
 

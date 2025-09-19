@@ -1,6 +1,7 @@
 package com.practica_red_social.prac_red_social.services;
 
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -17,15 +18,14 @@ import java.util.UUID;
 import static java.util.Map.entry;
 
 @Service
-@RequiredArgsConstructor
 public class JWTService {
 
     @Value("${application.security.jwt.secret-key}")
-    private final String s_key;
+    private String s_key;
     @Value("${application.security.jwt.expiration}")
-    private final long jwt_expiration;
+    private long jwt_expiration;
     @Value("${application.security.jwt.refresh-token.expiration}")
-    private final long jwt_refresh_expiration;
+    private long jwt_refresh_expiration;
 
     public String generateAccessToken(UserEntity user){
         return buildToken(user, jwt_expiration);
@@ -44,6 +44,20 @@ public class JWTService {
                 .expiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String extractTokenUsername(String token){
+        Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
+
+        return jwtToken.getSubject();
+        //PARA OBTENER EL CLAIM OPCIONAL QUE YO GUARDE EN EL TOKEN, COMO EL USERNAME O EL ROL COMO HASHMAP.
+        //return jwtToken.get("role", String.class);
+    }
+
+    //verificar que devuelve el subject, por que tambien hay roles en el token.
+    public String isValidToken(String token){
+        String username = extractTokenUsername(token);
+        return "aus";
     }
 
     private SecretKey getSignInKey(){
