@@ -1,5 +1,6 @@
 package com.practica_red_social.prac_red_social.controllers;
 
+import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
@@ -21,8 +22,8 @@ public class AuthController {
         return new ResponseEntity<>(authorizationService.register(register), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value="/test", produces = "application/json")
-    public ResponseEntity<String> testing(){
-        return new ResponseEntity<>(authorizationService.test(), HttpStatus.ACCEPTED);
+    @GetMapping(value="/login", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<ResponseTokenDTO> login(@RequestBody LoginRequestDTO loginRequest){
+        return new ResponseEntity<>(authorizationService.login(loginRequest), HttpStatus.ACCEPTED);
     }
 }

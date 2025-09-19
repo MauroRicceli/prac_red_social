@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode
 @Table(name="usuarios")
 public class UserEntity {
 

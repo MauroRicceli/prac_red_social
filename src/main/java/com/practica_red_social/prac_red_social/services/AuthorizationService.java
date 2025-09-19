@@ -1,7 +1,9 @@
 package com.practica_red_social.prac_red_social.services;
 
 import com.practica_red_social.prac_red_social.configs.EncryptConfig;
-import com.practica_red_social.prac_red_social.controllers.AuthController;
+import com.practica_red_social.prac_red_social.exceptions.IllegalLoginEmailDoesntExists;
+import com.practica_red_social.prac_red_social.exceptions.IllegalLoginPasswordDoesntMatches;
+import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
@@ -10,9 +12,10 @@ import com.practica_red_social.prac_red_social.models.entities.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,9 +26,10 @@ public class AuthorizationService {
     private final JWTService jwtService;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
 
     public ResponseTokenDTO register(RegisterRequestDTO registerRequest){
-       final String hashpw = encryptConfig.codificarPassword().encode(registerRequest.getPassword());
+       final String hashpw = encryptConfig.obtenerEncriptador().encode(registerRequest.getPassword());
        final UserEntity user = UserEntity
                .builder()
                .username(registerRequest.getUsername())
@@ -53,16 +57,33 @@ public class AuthorizationService {
 
     }
 
-    //Testear como me devuelve el username del token al ponerle roles en el Claims.
-    public String test(){
-        List<UserEntity> usr = userRepository.findAll();
+    public ResponseTokenDTO login(LoginRequestDTO loginRequest){
+        UserEntity user = userRepository.getUserByEmail(loginRequest.getEmail()).orElseThrow();
 
-        final Optional<TokenEntity> token = tokenRepository.findByUser(usr.get(0));
-
-        if(token.isEmpty()){
-            throw new IllegalArgumentException("No existe el token");
+        /*  NO HACE FALTA VERIFICAR SI EXISTE EL MAIL, O LA CONTRASEÑA COINCIDE. EL AUTH. MANAGER LO HACE SOLO APOYANDOSE EN USERDETAILSSERVICE Y PASSWORD ENCODER.
+        if(!encryptConfig.obtenerEncriptador().matches(loginRequest.getPassword(), user.getPassword())){
+            throw new IllegalLoginPasswordDoesntMatches("Las contraseñas no coinciden");
         }
+         */
 
-        return jwtService.extractTokenUsername(token.get().getToken());
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+        tokenRepository.revokeOrExpireTokenByUser(user);
+
+        final String accessToken = jwtService.generateAccessToken(user);
+        final String refreshToken = jwtService.generateRefreshToken(user);
+
+        TokenEntity tkn = TokenEntity.builder()
+                .tokenType(TokenEntity.TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .usuarioPertenece(user)
+                .token(refreshToken)
+                .build();
+
+        tokenRepository.save(tkn);
+
+        return new ResponseTokenDTO(accessToken, refreshToken);
     }
+
 }
