@@ -6,6 +6,9 @@ import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
 import com.practica_red_social.prac_red_social.services.AuthorizationService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.Authorization;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +28,10 @@ public class AuthController {
     @GetMapping(value="/login", produces = "application/json", consumes = "application/json")
     public ResponseEntity<ResponseTokenDTO> login(@RequestBody LoginRequestDTO loginRequest){
         return new ResponseEntity<>(authorizationService.login(loginRequest), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping(value="/renovateTokens", produces = "application/json")
+    public ResponseEntity<ResponseTokenDTO> renovateTokens(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
+        return new ResponseEntity<>(authorizationService.renovateTokens(authHeader), HttpStatus.ACCEPTED);
     }
 }

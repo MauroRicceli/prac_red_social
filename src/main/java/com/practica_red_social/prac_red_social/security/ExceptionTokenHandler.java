@@ -1,8 +1,6 @@
 package com.practica_red_social.prac_red_social.security;
 
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenType;
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenUserDontExists;
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenUserRoleDoesntMatch;
+import com.practica_red_social.prac_red_social.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,6 +21,21 @@ public class ExceptionTokenHandler {
 
     @ExceptionHandler(exception = InvalidTokenType.class)
     public ResponseEntity<String> handlerInvalidTokenType(InvalidTokenType e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(exception = InvalidTokenDontExists.class)
+    public ResponseEntity<String> handlerInvalidTokenDontExists(InvalidTokenDontExists e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(exception = InvalidTokenExpirated.class)
+    public ResponseEntity<String> handlerInvalidTokenExpirated(InvalidTokenExpirated e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(exception = InvalidTokenRevoked.class)
+    public ResponseEntity<String> handlerInvalidTokenRevoked(InvalidTokenRevoked e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

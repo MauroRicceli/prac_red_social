@@ -36,6 +36,7 @@ public class UserEntity {
 
     @Email
     @NotNull
+    @Column(unique = true)
     private String email;
 
     @Min(16)

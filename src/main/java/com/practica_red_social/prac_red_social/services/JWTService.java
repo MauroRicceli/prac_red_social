@@ -1,9 +1,6 @@
 package com.practica_red_social.prac_red_social.services;
 
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenExpirated;
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenType;
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenUserDontExists;
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenUserRoleDoesntMatch;
+import com.practica_red_social.prac_red_social.exceptions.*;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
@@ -13,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +32,7 @@ public class JWTService {
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long jwt_refresh_expiration;
 
+    @Autowired
     private TokenRepository tokenRepository;
 
     public String generateAccessToken(UserEntity user){
@@ -45,6 +44,15 @@ public class JWTService {
         return buildToken(user, jwt_refresh_expiration, "refresh");
     }
 
+
+    /**
+     * Genera un token válido para el usuario
+     *
+     * @param user Usuario enviado
+     * @param expiration Expiracion pretendida para el token
+     * @param type Tipo de token, acceso/refresh
+     * @return String token construido
+     */
     private String buildToken(UserEntity user, long expiration, String type){
         return Jwts.builder()
                 .id(UUID.randomUUID().toString())
@@ -56,6 +64,12 @@ public class JWTService {
                 .compact();
     }
 
+    /**
+        Obtiene el email del usuario dueño del token
+
+        @param token Token enviado
+        @return String con el email del usuario
+    **/
     public String extractTokenUsername(String token){
         Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
 
@@ -64,22 +78,47 @@ public class JWTService {
         //return jwtToken.get("role", String.class);
     }
 
+    /**
+     * Obtiene el rol del usuario dueño del token
+     *
+     * @param token Token enviado
+     * @return String con el rol del usuario
+     */
+
     private String extractTokenRole(String token){
         Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
         return jwtToken.get("role", String.class);
     }
+
+    /**
+     * Obtiene el tipo de token enviado (refresh o access)
+     *
+     * @param token Token enviado
+     * @return String tipo de token
+     */
 
     private String extractTokenType(String token){
         Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
         return jwtToken.get("type", String.class);
     }
 
+    /**
+     * Obtiene la expiracion del token
+     *
+     * @param token
+     * @return Date fecha de expiracion
+     */
     private Date extractTokenExpiration(String token){
         Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
         return jwtToken.getExpiration();
     }
 
-    //verificar que devuelve el subject, por que tambien hay roles en el token.
+    /**
+     * Verifica que el token de refresco sea completamente valido
+     *
+     * @param token Token de REFRESCO enviado
+     * @return boolean True/excepcion si es valido o no.
+     */
     public boolean isValidRefreshToken(String token){
         String username = extractTokenUsername(token);
 
@@ -87,10 +126,10 @@ public class JWTService {
             throw new InvalidTokenType("El token no es de tipo refresh");
         }
 
-        final Optional<TokenEntity> tkn = tokenRepository.findByUserEmail(username);
+        final Optional<TokenEntity> tkn = tokenRepository.findByToken(token);
 
         if(tkn.isEmpty()){
-            throw new InvalidTokenUserDontExists("El usuario que envia ese token no existe");
+            throw new InvalidTokenDontExists("El token no existe en el sistema");
         }
 
         final UserEntity userTkn = tkn.get().getUsuarioPertenece();
@@ -99,15 +138,25 @@ public class JWTService {
             throw new InvalidTokenUserRoleDoesntMatch("El rol enviado en el token y el del usuario son distintos");
         }
 
-        if(isTokenExpired(token)){
+        //verifico que el token enviado y el de la base de datos no estén expirados.
+        if(isTokenExpired(token) && tkn.get().isExpired()){
            throw new InvalidTokenExpirated("El token está expirado");
+        }
+
+        if(tkn.get().isRevoked()){
+            throw new InvalidTokenRevoked("El token ha sido revocado");
         }
 
         return true;
 
     }
 
-    //no tiene que consultar a la DB si es access
+    /**
+     * Verifica que el token de acceso sea valido o no
+     *
+     * @param token Token de ACCESO enviado
+     * @return true/excepcion depende si es valido o no.
+     */
     public boolean isValidAccessToken(String token){
         if(!extractTokenType(token).equals("access")){
             throw new InvalidTokenType("El token no es de tipo access");
@@ -118,9 +167,16 @@ public class JWTService {
         return true;
     }
 
+    /**
+     * Verifica si el token esta expirado
+     *
+     * @param token Token enviado
+     * @return True/False dependiendo si es valido o no.
+     */
     private boolean isTokenExpired(String token){
         return extractTokenExpiration(token).before(new Date());
     }
+
 
     private SecretKey getSignInKey(){
         byte[] keyBytes = Decoders.BASE64.decode(s_key);

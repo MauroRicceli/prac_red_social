@@ -20,8 +20,11 @@ public interface TokenRepository extends JpaRepository<TokenEntity, Long> {
     @Query("SELECT t FROM TokenEntity t WHERE t.usuarioPertenece.email =:usuarioPerteneceEmail")
     Optional<TokenEntity> findByUserEmail(@Param("usuarioPerteneceEmail") String emailUser);
 
+    Optional<TokenEntity> findByToken(String token);
+
     @Modifying
     @Transactional
     @Query("UPDATE TokenEntity t SET t.revoked=true, t.expired=true WHERE t.usuarioPertenece =:user")
     void revokeOrExpireTokenByUser(@Param("user") UserEntity user);
+
 }

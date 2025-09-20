@@ -3,6 +3,7 @@ package com.practica_red_social.prac_red_social.services;
 import com.practica_red_social.prac_red_social.configs.EncryptConfig;
 import com.practica_red_social.prac_red_social.exceptions.IllegalLoginEmailDoesntExists;
 import com.practica_red_social.prac_red_social.exceptions.IllegalLoginPasswordDoesntMatches;
+import com.practica_red_social.prac_red_social.exceptions.InvalidTokenType;
 import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
@@ -14,6 +15,7 @@ import com.practica_red_social.prac_red_social.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,6 +29,13 @@ public class AuthorizationService {
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
+
+    /**
+     * Registra al usuario en el sistema, genera sus tokens, registra el de refresco y devuelve ambos.
+     *
+     * @param registerRequest DTO requerido
+     * @return DTO con el access token y el refresh token
+     */
 
     public ResponseTokenDTO register(RegisterRequestDTO registerRequest){
        final String hashpw = encryptConfig.obtenerEncriptador().encode(registerRequest.getPassword());
@@ -57,6 +66,13 @@ public class AuthorizationService {
 
     }
 
+    /**
+     * Verifica que el usuario exista y realiza el login, expirando los tokens antiguos y generando nuevos.
+     *
+     * @param loginRequest DTO con la informacion requerida
+     * @return DTO con el access token y el refresh token
+     */
+
     public ResponseTokenDTO login(LoginRequestDTO loginRequest){
         UserEntity user = userRepository.getUserByEmail(loginRequest.getEmail()).orElseThrow();
 
@@ -79,6 +95,47 @@ public class AuthorizationService {
                 .revoked(false)
                 .usuarioPertenece(user)
                 .token(refreshToken)
+                .build();
+
+        tokenRepository.save(tkn);
+
+        return new ResponseTokenDTO(accessToken, refreshToken);
+    }
+
+    /**
+     * Refresca los tokens del usuario del token enviado si es válido tanto el token como el usuario.
+     * Hace que todos los tokens existentes hasta ese momento se revoken/expiren.
+     *
+     * @param authHeader Token de REFRESCO enviado.
+     * @return DTO con los nuevos tokens de acceso/refresco.
+     */
+    public ResponseTokenDTO renovateTokens(String authHeader){
+        if(authHeader == null || !authHeader.contains("Bearer")){
+            throw new InvalidTokenType("El token no es de tipo BEARER o es nulo");
+        }
+
+        String token = authHeader.substring(7);
+
+        //ya maneja las excepciones dentro, si no sale ninguna el token es valido.
+        jwtService.isValidRefreshToken(token);
+
+        //email del usuario
+        String tokenUsername = jwtService.extractTokenUsername(token);
+
+        UserEntity user = userRepository.getUserByEmail(tokenUsername).orElseThrow(() -> new UsernameNotFoundException(tokenUsername));
+
+        //expira los tokens antiguos
+        tokenRepository.revokeOrExpireTokenByUser(user);
+
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        TokenEntity tkn = TokenEntity.builder()
+                .tokenType(TokenEntity.TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .token(refreshToken)
+                .usuarioPertenece(user)
                 .build();
 
         tokenRepository.save(tkn);
