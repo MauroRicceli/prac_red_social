@@ -110,14 +110,8 @@ public class AuthorizationService {
      * @return DTO con los nuevos tokens de acceso/refresco.
      */
     public ResponseTokenDTO renovateTokens(String authHeader){
-        if(authHeader == null || !authHeader.contains("Bearer")){
-            throw new InvalidTokenType("El token no es de tipo BEARER o es nulo");
-        }
 
         String token = authHeader.substring(7);
-
-        //ya maneja las excepciones dentro, si no sale ninguna el token es valido.
-        jwtService.isValidRefreshToken(token);
 
         //email del usuario
         String tokenUsername = jwtService.extractTokenUsername(token);

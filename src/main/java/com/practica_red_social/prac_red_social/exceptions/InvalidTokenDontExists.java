@@ -1,6 +1,8 @@
 package com.practica_red_social.prac_red_social.exceptions;
 
-public class InvalidTokenDontExists extends RuntimeException{
+import org.springframework.security.core.AuthenticationException;
+
+public class InvalidTokenDontExists extends AuthenticationException {
 
     public InvalidTokenDontExists(String message){super(message);}
 }

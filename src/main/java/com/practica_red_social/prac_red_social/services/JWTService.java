@@ -4,6 +4,7 @@ import com.practica_red_social.prac_red_social.exceptions.*;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
+import com.practica_red_social.prac_red_social.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,6 +13,8 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -34,6 +37,10 @@ public class JWTService {
 
     @Autowired
     private TokenRepository tokenRepository;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
 
     public String generateAccessToken(UserEntity user){
         return buildToken(user, jwt_expiration, "access");
@@ -78,6 +85,8 @@ public class JWTService {
         //return jwtToken.get("role", String.class);
     }
 
+
+
     /**
      * Obtiene el rol del usuario dueño del token
      *
@@ -85,7 +94,7 @@ public class JWTService {
      * @return String con el rol del usuario
      */
 
-    private String extractTokenRole(String token){
+    public String extractTokenRole(String token){
         Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
         return jwtToken.get("role", String.class);
     }
@@ -119,7 +128,7 @@ public class JWTService {
      * @param token Token de REFRESCO enviado
      * @return boolean True/excepcion si es valido o no.
      */
-    public boolean isValidRefreshToken(String token){
+    private boolean isValidRefreshToken(String token){
         String username = extractTokenUsername(token);
 
         if(!extractTokenType(token).equals("refresh")){
@@ -132,14 +141,17 @@ public class JWTService {
             throw new InvalidTokenDontExists("El token no existe en el sistema");
         }
 
-        final UserEntity userTkn = tkn.get().getUsuarioPertenece();
+        final UserDetails usrDetails = userDetailsService.loadUserByUsername(username);
+        final UserEntity user = userRepository.getUserByEmail(usrDetails.getUsername())
+                .orElseThrow(() -> new InvalidTokenUserDontExists("El usuario enviado en el token no coincide con ninguno en el sistema"));
 
-        if(!userTkn.getUserRole().toString().equals(extractTokenRole(token))){
+
+        if(!user.getUserRole().toString().equals(extractTokenRole(token))){
             throw new InvalidTokenUserRoleDoesntMatch("El rol enviado en el token y el del usuario son distintos");
         }
 
         //verifico que el token enviado y el de la base de datos no estén expirados.
-        if(isTokenExpired(token) && tkn.get().isExpired()){
+        if(isTokenExpired(token) || tkn.get().isExpired()){
            throw new InvalidTokenExpirated("El token está expirado");
         }
 
@@ -151,13 +163,35 @@ public class JWTService {
 
     }
 
+    /**Verifica que el token enviado sea completamente valido
+     *
+     *
+     * @param header Header enviado
+     * @return true/false si es válido o no.
+     */
+
+    public boolean isValidHeader(String header){
+
+        if(header == null || !header.contains("Bearer ")){
+            throw new InvalidTokenType("El header es nulo o no es de tipo Bearer");
+        }
+
+        String token = header.substring(7);
+
+        if(extractTokenType(token).toLowerCase().equals("refresh")){
+            return isValidRefreshToken(token);
+        } else {
+            return isValidAccessToken(token);
+        }
+    }
+
     /**
      * Verifica que el token de acceso sea valido o no
      *
      * @param token Token de ACCESO enviado
      * @return true/excepcion depende si es valido o no.
      */
-    public boolean isValidAccessToken(String token){
+    private boolean isValidAccessToken(String token){
         if(!extractTokenType(token).equals("access")){
             throw new InvalidTokenType("El token no es de tipo access");
         }

@@ -1,39 +1,96 @@
 package com.practica_red_social.prac_red_social.configs;
 
+import com.practica_red_social.prac_red_social.exceptions.InvalidTokenType;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
+import com.practica_red_social.prac_red_social.services.JWTService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class AppConfig {
 
     private final UserRepository userRepository;
+    private final EncryptConfig encryptConfig;
+    private final TokenRepository tokenRepository;
+
+
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtAuthFilter filterConfig,
+            AuthenticationProvider authenticationProvider
+    ) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**")
+                        .requestMatchers("/api/auth/register", "/api/auth/login")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
-                ).sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
-
-
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(filterConfig, UsernamePasswordAuthenticationFilter.class)
+                // Manejo de excepciones
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\":\"" + authException.getMessage() + "\"}");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\":\"" + accessDeniedException.getMessage() + "\"}");
+                        })
+                )
+                // Configuración de logout
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .addLogoutHandler((request, response, authentication) -> {
+                            final var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+                            logout(authHeader);
+                        })
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                SecurityContextHolder.clearContext()
+                        )
+                );
 
         return http.build();
+    }
+
+
+
+    private void logout(String authHeader){
+        if(authHeader == null || !authHeader.contains("Bearer ")){
+            throw new InvalidTokenType("El token no es de tipo Bearer o es nulo");
+        }
+
+        String tkn = authHeader.substring(7);
+
+        tokenRepository.revokeOrExpireToken(tkn);
+
     }
 
     @Bean
@@ -52,4 +109,13 @@ public class AppConfig {
                     .build();
         };
     }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(encryptConfig.obtenerEncriptador());
+        return authProvider;
+    }
+
 }

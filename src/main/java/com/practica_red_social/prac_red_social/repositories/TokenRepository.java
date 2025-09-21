@@ -27,4 +27,14 @@ public interface TokenRepository extends JpaRepository<TokenEntity, Long> {
     @Query("UPDATE TokenEntity t SET t.revoked=true, t.expired=true WHERE t.usuarioPertenece =:user")
     void revokeOrExpireTokenByUser(@Param("user") UserEntity user);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE TokenEntity t SET t.revoked=true, t.expired=true WHERE t.token =:token")
+    void revokeOrExpireToken(@Param("token") String token);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE TokenEntity t SET t.revoked=true, t.expired=true WHERE t.usuarioPertenece.email =:userEmail")
+    void revokeOrExpireTokenByUserEmail(@Param("userEmail") String userEmail);
+
 }

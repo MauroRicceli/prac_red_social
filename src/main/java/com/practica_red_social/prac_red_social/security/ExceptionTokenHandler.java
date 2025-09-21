@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+//TODAS ESTAS EXCEPCIONES OCURREN EN EL FILTRO, POR LO QUE NUNCA LLEGAN AL CONTROLLER.
+//PARA EL PROXIMO PROYECTO ARREGLARLO, Y NO HACERLO A NIVEL CONTROLLER SI NO A NIVEL FILTRO.
 @ControllerAdvice
 public class ExceptionTokenHandler {
 
