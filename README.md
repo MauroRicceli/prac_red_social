@@ -1,12 +1,12 @@
-🌐 Mini Red Social
+# 🌐 Mini Red Social
 
 
 
 
 Una mini red social desarrollada con Spring Boot, JWT, Spring Data JPA/Hibernate y una arquitectura moderna para despliegue con Docker y Kubernetes.
-Permite a los usuarios registrarse, iniciar sesión, interactuar con publicaciones, gestionar amistades y manejar tokens de autenticación.
+Permite a los usuarios registrarse, iniciar sesión, interactuar con publicaciones, gestionar amistades y manejar tokens de autenticación. (A ampliar funcionalidades)
 
-✨ Características
+## ✨ Características
 
 👤 Gestión de usuarios: Registro, login y roles (USER, ADMIN).
 
@@ -18,15 +18,7 @@ Permite a los usuarios registrarse, iniciar sesión, interactuar con publicacion
 
 🔑 Tokens: Manejo de access y refresh tokens.
 
-🧪 Testing:
-
-Postman ✅
-
-JUnit & Mockito ⚙️
-
-🚀 Despliegue CI/CD: GitHub Actions, Docker y Kubernetes.
-
-🛠 Tecnologías
+## 🛠 Tecnologías
 
 Backend: Java 17+, Spring Boot, Spring Data JPA, Hibernate
 
