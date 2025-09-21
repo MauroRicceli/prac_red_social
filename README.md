@@ -8,7 +8,7 @@ Permite a los usuarios registrarse, iniciar sesión, interactuar con publicacion
 
 ## ✨ Características
 
-👤 Gestión de usuarios: Registro, login y roles (USER, ADMIN).
+👤 Gestión de usuarios: Registro, login y roles (STANDARD, ADMIN).
 
 🔐 Seguridad: JWT para autenticación y autorización.
 
