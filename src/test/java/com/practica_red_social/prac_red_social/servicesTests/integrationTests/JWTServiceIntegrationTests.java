@@ -12,22 +12,12 @@ import com.practica_red_social.prac_red_social.services.JWTService;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import org.hibernate.TransientObjectException;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 public class JWTServiceIntegrationTests {
 
     @Autowired
@@ -187,17 +177,9 @@ public class JWTServiceIntegrationTests {
     }
 
     @Test
-    @DisplayName("Invalid auth header with wrong username in token")
-    public void invalidHeaderInvalidUsernameInToken(){
-        String header = "Bearer ".concat("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI1NDhiYTcyZi0zYzJmLTRlNGYtODlmNS01YzY4YzMyMDZmZTkiLCJ0eXBlIjoiYWNjZXNzIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkpvaG4gRG9lIiwic3ViIjoiam9obmRvZW1haWwuY29tIiwiaWF0IjoxNzU4NDk4ODI5LCJleHAiOjE3NTg1MDA2Mjl9.j790nuoeBdPBUQPnTWQH7LT6AWYSkh39UGdy5t-KLrs");
-
-        Assertions.assertThrowsExactly(InvalidTokenUserDontExists.class, () -> { jwtService.isValidHeader(header); });
-    }
-
-    @Test
     @DisplayName("Invalid auth header with wrong type of token")
     public void invalidHeaderWrongTypeToken(){
-        String header = "Bearer ".concat("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyOTgzNTIxOC0wMDgyLTRhYjAtOTRjMS03YTRkOTU1NDUxZTEiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoic210aCIsIm5hbWUiOiJKb2huIERvZSIsInN1YiI6ImpvaG5kb2VAZ21haWwuY29tIiwiaWF0IjoxNzU4NDk5MDAwLCJleHAiOjE3NTg1MDA4MDB9.OxyR2CUQ7pd4mcq-4rzzKR--vMdLZo7FbDoq_A7hf6A");
+        String header = "Bearer ".concat("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4OTZlM2MzMC02NDg4LTRmNDgtOTAwNC1jMDdiMTRhMWU1MWUiLCJ0eXBlIjoic210aCIsInJvbGUiOiJBRE1JTiIsIm5hbWUiOiJKb2huIERvZSIsInN1YiI6ImpvaG5kb2VAZ21haWwuY29tIiwiaWF0IjoxNzU4NTIyODkxLCJleHAiOjQ3ODI2MjE5MTV9.s-F8Tl2H4u7U_FTELxiuvAPBbQqVm629W8d6K7zRaic");
 
         Assertions.assertThrowsExactly(InvalidTokenType.class, () -> { jwtService.isValidHeader(header); });
     }

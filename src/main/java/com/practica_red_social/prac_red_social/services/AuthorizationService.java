@@ -118,6 +118,8 @@ public class AuthorizationService {
 
         UserEntity user = userRepository.getUserByEmail(tokenUsername).orElseThrow(() -> new UsernameNotFoundException(tokenUsername));
 
+        //NO ME FIJO SI ESTA EXPIRADO, POR QUE LO VERIFICA EL FILTRO. OSEA, SI YA LLEGO HASTA ACA ES PQ NO ESTA EXPIRADO.
+
         //expira los tokens antiguos
         tokenRepository.revokeOrExpireTokenByUser(user);
 
