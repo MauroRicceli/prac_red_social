@@ -131,10 +131,6 @@ public class JWTService {
     private boolean isValidRefreshToken(String token){
         String username = extractTokenUsername(token);
 
-        if(!extractTokenType(token).equals("refresh")){
-            throw new InvalidTokenType("El token no es de tipo refresh");
-        }
-
         final Optional<TokenEntity> tkn = tokenRepository.findByToken(token);
 
         if(tkn.isEmpty()){
@@ -180,8 +176,10 @@ public class JWTService {
 
         if(extractTokenType(token).toLowerCase().equals("refresh")){
             return isValidRefreshToken(token);
-        } else {
+        } else if(extractTokenType(token).toLowerCase().equals("access")) {
             return isValidAccessToken(token);
+        } else {
+            throw new InvalidTokenType("El tipo de token es inválido");
         }
     }
 
@@ -192,12 +190,17 @@ public class JWTService {
      * @return true/excepcion depende si es valido o no.
      */
     private boolean isValidAccessToken(String token){
-        if(!extractTokenType(token).equals("access")){
-            throw new InvalidTokenType("El token no es de tipo access");
-        }
+
         if(isTokenExpired(token)){
             throw new InvalidTokenExpirated("El token está expirado");
         }
+        if(!extractTokenUsername(token).contains("@")){
+            throw new InvalidTokenUserDontExists("El usuario enviado no es válido");
+        }
+        if(!extractTokenRole(token).equals("ADMIN") && !extractTokenRole(token).equals("STANDARD")){
+            throw new InvalidTokenUserRoleDoesntMatch("El usuario no tiene un rol válido");
+        }
+
         return true;
     }
 
