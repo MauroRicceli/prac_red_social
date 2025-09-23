@@ -1,7 +1,8 @@
 name: Integration Tests
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
+    types: [run-integration-tests]
 
 jobs:
   integration-tests:
