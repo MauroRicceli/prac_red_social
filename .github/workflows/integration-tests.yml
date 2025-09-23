@@ -9,7 +9,7 @@ jobs:
     name: Run Integration Tests
     runs-on: ubuntu-latest
     env:
-      DB_URL: ${{ secrets.DB_URL_TESTING }}
+      DB_URL: ${{ secrets.DB_URL_TEST }}
       DB_ROOT_USERNAME: ${{ secrets.DB_ROOT_USERNAME_TEST }}
       DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD_TEST }}
       SECURITY_PASSWORD: ${{ secrets.SECURITY_PASSWORD }}
