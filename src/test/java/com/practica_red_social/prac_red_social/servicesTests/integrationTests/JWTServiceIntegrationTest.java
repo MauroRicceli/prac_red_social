@@ -5,8 +5,8 @@ import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
-import com.practica_red_social.prac_red_social.repositories.testsrepos.TokenRepositoryTests;
-import com.practica_red_social.prac_red_social.repositories.testsrepos.UserRepositoryTests;
+import com.practica_red_social.prac_red_social.repositories.TokenRepository;
+import com.practica_red_social.prac_red_social.repositories.UserRepository;
 import com.practica_red_social.prac_red_social.services.AuthorizationService;
 import com.practica_red_social.prac_red_social.services.JWTService;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -16,6 +16,10 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SpringBootTest
 public class JWTServiceIntegrationTest {
@@ -35,10 +39,10 @@ public class JWTServiceIntegrationTest {
 
 
     @Autowired
-    private TokenRepositoryTests tokenRepository;
+    private TokenRepository tokenRepository;
 
     @Autowired
-    private UserRepositoryTests userRepository;
+    private UserRepository userRepository;
 
     private final String tokenDeAccesoTest = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4ZjhkNzMwZS05ZTJjLTQxMDMtYTI1MC1mMjFlODY0ZTFlYWUiLCJuYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoiam9obmRvZUBnbWFpbC5jb20iLCJpYXQiOjE3NTg0OTQ5MzksImV4cCI6MjQ3OTM5NTE2OX0.zIlHc_fozxVLvvy-TBcB6cVNcSGdL4Jn3pPf1ZePXIc";
     private final String tokenDeRefrescoTest = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyYjAyZmE3Mi01NTAzLTQzZTMtOGMyOC0yMmE5ZDFlZGI5ZWEiLCJuYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6ImpvaG5kb2VAZ21haWwuY29tIiwiaWF0IjoxNzU4NDk0OTM5LCJleHAiOjI0Mzk4MDg5NTE2OX0.YN2bELt4vszsFbMmcyaXyxthJiBLNYkDFFdSRNkAZ-8";
@@ -47,8 +51,11 @@ public class JWTServiceIntegrationTest {
     @BeforeAll
     public static void firstSetup(){
         //CARGO MIS VARIABLES DE ENTORNO.
-        Dotenv dotenv = Dotenv.load();
-        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        Path envPath = Paths.get(".env.test");
+        if (Files.exists(envPath)) {
+            Dotenv dotenv = Dotenv.configure().filename(".env.test").load();
+            dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        }
 
     }
 

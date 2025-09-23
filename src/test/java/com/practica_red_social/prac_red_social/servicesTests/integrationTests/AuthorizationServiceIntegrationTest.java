@@ -4,13 +4,17 @@ import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
-import com.practica_red_social.prac_red_social.repositories.testsrepos.TokenRepositoryTests;
-import com.practica_red_social.prac_red_social.repositories.testsrepos.UserRepositoryTests;
+import com.practica_red_social.prac_red_social.repositories.TokenRepository;
+import com.practica_red_social.prac_red_social.repositories.UserRepository;
 import com.practica_red_social.prac_red_social.services.AuthorizationService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SpringBootTest
 public class AuthorizationServiceIntegrationTest {
@@ -19,16 +23,19 @@ public class AuthorizationServiceIntegrationTest {
     private AuthorizationService authorizationService;
 
     @Autowired
-    private TokenRepositoryTests tokenRepository;
+    private TokenRepository tokenRepository;
 
     @Autowired
-    private UserRepositoryTests userRepository;
+    private UserRepository userRepository;
 
     @BeforeAll
     public static void firstSetup(){
-        //CARGO MIS VARIABLES DE ENTORNO.
-        Dotenv dotenv = Dotenv.load();
-        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        //PARA NO ROMPER EL CI EN LA ACTION, Y QUE SIGA FUNCIONANDO A NIVEL LOCAL.
+        Path envPath = Paths.get(".env.test");
+        if (Files.exists(envPath)) {
+            Dotenv dotenv = Dotenv.configure().filename(".env.test").load();
+            dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        }
     }
 
     @BeforeEach
