@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,5 +29,12 @@ public class PublicationEntity {
     @JoinColumn(name="user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity userPertenece;
+
+    @Column(nullable = false)
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+
+    private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
+
+    //PARA CUANDO LO HAGA DE VERDAD A LA RED SOCIAL, HACER TODA LA PARTE DE PUBLICACIONES EN NOSQL, MONGODB.
 
 }
