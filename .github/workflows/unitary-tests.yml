@@ -26,3 +26,11 @@ jobs:
           path: target/surefire-reports/TEST-*.xml
           reporter: java-junit
 
+      - name: Trigger Integration Tests Workflow
+        if: success()  # solo si los unit tests pasaron
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          repository: ${{ github.repository }}
+          workflow: 'integration-tests.yml'  # el nombre del workflow de integración
+          ref: ${{ github.ref }}
+
