@@ -5,8 +5,8 @@ import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
-import com.practica_red_social.prac_red_social.repositories.TokenRepository;
-import com.practica_red_social.prac_red_social.repositories.UserRepository;
+import com.practica_red_social.prac_red_social.repositories.testsrepos.TokenRepositoryTests;
+import com.practica_red_social.prac_red_social.repositories.testsrepos.UserRepositoryTests;
 import com.practica_red_social.prac_red_social.services.AuthorizationService;
 import com.practica_red_social.prac_red_social.services.JWTService;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @SpringBootTest
-public class JWTServiceIntegrationTests {
+public class JWTServiceIntegrationTest {
 
     @Autowired
     private JWTService jwtService;
@@ -35,10 +35,10 @@ public class JWTServiceIntegrationTests {
 
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private TokenRepositoryTests tokenRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepositoryTests userRepository;
 
     private final String tokenDeAccesoTest = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4ZjhkNzMwZS05ZTJjLTQxMDMtYTI1MC1mMjFlODY0ZTFlYWUiLCJuYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoiam9obmRvZUBnbWFpbC5jb20iLCJpYXQiOjE3NTg0OTQ5MzksImV4cCI6MjQ3OTM5NTE2OX0.zIlHc_fozxVLvvy-TBcB6cVNcSGdL4Jn3pPf1ZePXIc";
     private final String tokenDeRefrescoTest = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyYjAyZmE3Mi01NTAzLTQzZTMtOGMyOC0yMmE5ZDFlZGI5ZWEiLCJuYW1lIjoiSm9obiBEb2UiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6ImpvaG5kb2VAZ21haWwuY29tIiwiaWF0IjoxNzU4NDk0OTM5LCJleHAiOjI0Mzk4MDg5NTE2OX0.YN2bELt4vszsFbMmcyaXyxthJiBLNYkDFFdSRNkAZ-8";

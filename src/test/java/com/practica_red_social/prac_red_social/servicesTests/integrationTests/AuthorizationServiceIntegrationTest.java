@@ -4,26 +4,25 @@ import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
 import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
 import com.practica_red_social.prac_red_social.models.entities.UserEntity;
-import com.practica_red_social.prac_red_social.repositories.TokenRepository;
-import com.practica_red_social.prac_red_social.repositories.UserRepository;
+import com.practica_red_social.prac_red_social.repositories.testsrepos.TokenRepositoryTests;
+import com.practica_red_social.prac_red_social.repositories.testsrepos.UserRepositoryTests;
 import com.practica_red_social.prac_red_social.services.AuthorizationService;
 import io.github.cdimascio.dotenv.Dotenv;
-import io.jsonwebtoken.lang.Assert;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class AuthorizationServiceIntegrationTests {
+public class AuthorizationServiceIntegrationTest {
 
     @Autowired
     private AuthorizationService authorizationService;
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private TokenRepositoryTests tokenRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepositoryTests userRepository;
 
     @BeforeAll
     public static void firstSetup(){

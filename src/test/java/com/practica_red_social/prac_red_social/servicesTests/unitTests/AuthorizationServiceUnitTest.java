@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 //(@SpringBootTest SOLO SI QUIERO CARGARTODO EL CONTEXTO DE SPRING BOOT.
 @ExtendWith(MockitoExtension.class)
-public class AuthorizationServiceUnitTests {
+public class AuthorizationServiceUnitTest {
 
     @Mock
     private EncryptConfig encryptConfig;
