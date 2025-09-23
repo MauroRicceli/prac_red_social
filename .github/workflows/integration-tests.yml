@@ -8,6 +8,8 @@ jobs:
   integration-tests:
     name: Run Integration Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       DB_URL: ${{ secrets.DB_URL_TEST }}
       DB_ROOT_USERNAME: ${{ secrets.DB_ROOT_USERNAME_TEST }}
@@ -39,3 +41,9 @@ jobs:
           name: Integration Tests
           path: target/surefire-reports/TEST-*.xml
           reporter: java-junit
+
+      - name: Trigger Docker-build-push
+        if: success()  # solo si los unit tests pasaron
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          event-type: 'run-docker-build-push'
