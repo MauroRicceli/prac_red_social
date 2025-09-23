@@ -1,0 +1,28 @@
+on:
+  pull_request:
+  push:
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Unit Tests
+        run: mvn test -Dtest=com.practica_red_social.prac_red_social.servicesTests.unitTests.*
+
+      - name: Publish Unit Test Report
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: Unit Tests
+          path: target/surefire-reports/TEST-*.xml
+          reporter: junit
+
