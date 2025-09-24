@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +32,9 @@ public class Comments {
     @NotNull
     private List<Comments> replies = new ArrayList<Comments>();
 
-    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+    private Instant createdAt;
 
-    private Timestamp updatedAt;
+    private Instant updatedAt;
 
     @Min(0)
     private int likes = 0;

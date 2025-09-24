@@ -1,9 +1,6 @@
 package com.practica_red_social.prac_red_social.controllers;
 
-import com.practica_red_social.prac_red_social.models.dtos.ModifyFriendDTO;
-import com.practica_red_social.prac_red_social.models.dtos.PublicationCreateDTO;
-import com.practica_red_social.prac_red_social.models.dtos.PublicationRemoveDTO;
-import com.practica_red_social.prac_red_social.models.dtos.PublicationCreateResponseDTO;
+import com.practica_red_social.prac_red_social.models.dtos.*;
 import com.practica_red_social.prac_red_social.services.UserActivitiesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -41,5 +38,23 @@ public class UserActivitiesController {
     @PutMapping(value="/removePublication", consumes = "application/json", produces = "application/json")
     public ResponseEntity<PublicationRemoveDTO> removePublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody PublicationRemoveDTO publicationRemoveDTO){
         return new ResponseEntity<>(userActivitiesService.removePublication(auth, publicationRemoveDTO), HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
+    @PutMapping(value="/modifyPublication", consumes="application/json", produces="application/json")
+    public ResponseEntity<ModifyPublicationDTO> modifyPublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,@RequestBody ModifyPublicationDTO modifiedPublicationDTO){
+        return new ResponseEntity<>(userActivitiesService.modifyPublication(auth, modifiedPublicationDTO), HttpStatus.ACCEPTED);
+    }
+
+    /**
+     * Si la publicacion ya tenia un like lo quita, y si no lo tenia lo agrega.
+     * @param auth
+     * @param likedPublicationDTO
+     * @return DTO con info or exception si ocurre
+     */
+    @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
+    @PutMapping(value="/likePublication", consumes="application/json", produces = "application/json")
+    public ResponseEntity<LikedPublicationDTO> likePublication(@RequestHeader(HttpHeaders.AUTHORIZATION)String auth, @RequestBody LikedPublicationDTO likedPublicationDTO){
+        return new ResponseEntity<>(userActivitiesService.manageLikedPublication(auth, likedPublicationDTO), HttpStatus.ACCEPTED);
     }
 }

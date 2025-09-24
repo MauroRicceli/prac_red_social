@@ -31,6 +31,7 @@ public class PublicationDocument {
 
     @Min(0)
     @NotNull
+    private Set<Liked> userLiked = new HashSet<Liked>();
     private int likes = 0;
 
     @Email

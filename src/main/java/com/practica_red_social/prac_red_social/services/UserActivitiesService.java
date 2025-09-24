@@ -5,12 +5,10 @@ import com.practica_red_social.prac_red_social.exceptions.FriendEmailDontExistsE
 import com.practica_red_social.prac_red_social.exceptions.NotFriendsAlreadyException;
 import com.practica_red_social.prac_red_social.exceptions.PublicationDoesntExistsException;
 import com.practica_red_social.prac_red_social.models.auxiliar.Tupla;
-import com.practica_red_social.prac_red_social.models.dtos.ModifyFriendDTO;
-import com.practica_red_social.prac_red_social.models.dtos.PublicationCreateDTO;
-import com.practica_red_social.prac_red_social.models.dtos.PublicationRemoveDTO;
-import com.practica_red_social.prac_red_social.models.dtos.PublicationCreateResponseDTO;
+import com.practica_red_social.prac_red_social.models.dtos.*;
 import com.practica_red_social.prac_red_social.models.entities.mongodb.Friend;
 import com.practica_red_social.prac_red_social.models.entities.mongodb.FriendsDocument;
+import com.practica_red_social.prac_red_social.models.entities.mongodb.Liked;
 import com.practica_red_social.prac_red_social.models.entities.mongodb.PublicationDocument;
 import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.FriendshipRepository;
@@ -45,6 +43,16 @@ public class UserActivitiesService {
         }
         return user.get();
 
+    }
+
+    /**
+     * Verifica si la publiacion existe por ID
+     *
+     * @param id de la publicacion
+     * @return PublicationDocument si existe, PublicationDoesntExistsException si no.
+     */
+    private PublicationDocument verifyPublicationExistenceAndGetIt(String id){
+        return publicationRepository.findById(id).orElseThrow(() -> new PublicationDoesntExistsException("La publicacion no existe"));
     }
 
     public ModifyFriendDTO addFriend(String header, ModifyFriendDTO friendDTO){
@@ -147,13 +155,59 @@ public class UserActivitiesService {
     public PublicationRemoveDTO removePublication(String auth, PublicationRemoveDTO publicationRemoveDTO){
         String token = auth.substring(7);
 
-        long publicationsDeleted = publicationRepository.deleteByid(publicationRemoveDTO.getId_publication());
+        long publicationsDeleted = publicationRepository.deleteByIdAndUserEmailDueño(publicationRemoveDTO.getIdPublication(), jwtService.extractTokenUsername(token));
 
         if(publicationsDeleted <= 0){
-            throw new PublicationDoesntExistsException("La publicación que quiere eliminar no existe");
+            throw new PublicationDoesntExistsException("La publicación que quiere eliminar no existe o no es del usuario solicitante");
         }
 
-        publicationRemoveDTO.setWhen_deleted(Instant.now());
+        publicationRemoveDTO.setWhenDeleted(Instant.now());
         return publicationRemoveDTO;
+    }
+
+    public ModifyPublicationDTO modifyPublication(String auth, ModifyPublicationDTO modifiedPublicationDTO){
+
+        String token = auth.substring(7);
+
+        PublicationDocument publication = verifyPublicationExistenceAndGetIt(modifiedPublicationDTO.getIdPublication());
+
+
+        if(!publication.getUserEmailDueño().equals(jwtService.extractTokenUsername(token))){
+            throw new PublicationDoesntExistsException("La publicacion no pertenece a ese usuario");
+        }
+
+        publication.setMessage(modifiedPublicationDTO.getNewMessage());
+
+        publicationRepository.save(publication);
+
+        modifiedPublicationDTO.setWhenModified(publication.getUpdatedAt());
+        return modifiedPublicationDTO;
+    }
+
+    public LikedPublicationDTO manageLikedPublication(String auth, LikedPublicationDTO likedPublicationDTO){
+
+        PublicationDocument publication = verifyPublicationExistenceAndGetIt(likedPublicationDTO.getIdPublication());
+
+        Liked nuevoLike = Liked.builder()
+                .userEmailLiked(likedPublicationDTO.getUserEmailLiked())
+                .usernameLiked(likedPublicationDTO.getUsernameLiked())
+                .whenLiked(Instant.now())
+                .build();
+
+        if(!publication.getUserLiked().add(nuevoLike)) {
+             publication.getUserLiked().remove(nuevoLike);
+             publication.setLikes(publication.getUserLiked().size());
+             publicationRepository.save(publication);
+             likedPublicationDTO.setActionPerformed(LikedPublicationDTO.Action.UNLIKED);
+             likedPublicationDTO.setWhenLiked(nuevoLike.getWhenLiked());
+             return likedPublicationDTO;
+        }
+
+        publication.setLikes(publication.getUserLiked().size());
+        publicationRepository.save(publication);
+        likedPublicationDTO.setActionPerformed(LikedPublicationDTO.Action.LIKED);
+        likedPublicationDTO.setWhenLiked(nuevoLike.getWhenLiked());
+        return likedPublicationDTO;
+
     }
 }
