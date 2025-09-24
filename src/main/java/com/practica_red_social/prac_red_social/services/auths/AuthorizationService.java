@@ -1,14 +1,11 @@
-package com.practica_red_social.prac_red_social.services;
+package com.practica_red_social.prac_red_social.services.auths;
 
 import com.practica_red_social.prac_red_social.configs.EncryptConfig;
-import com.practica_red_social.prac_red_social.exceptions.IllegalLoginEmailDoesntExists;
-import com.practica_red_social.prac_red_social.exceptions.IllegalLoginPasswordDoesntMatches;
-import com.practica_red_social.prac_red_social.exceptions.InvalidTokenType;
-import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
-import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
-import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.models.dtos.auths.LoginRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.RegisterRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.ResponseTokenDTO;
+import com.practica_red_social.prac_red_social.models.entities.mysql.TokenEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
@@ -17,8 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

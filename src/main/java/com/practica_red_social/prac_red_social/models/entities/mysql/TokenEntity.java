@@ -1,4 +1,4 @@
-package com.practica_red_social.prac_red_social.models.entities;
+package com.practica_red_social.prac_red_social.models.entities.mysql;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

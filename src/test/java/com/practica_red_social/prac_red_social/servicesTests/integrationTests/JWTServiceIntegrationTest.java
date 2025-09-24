@@ -1,14 +1,14 @@
 package com.practica_red_social.prac_red_social.servicesTests.integrationTests;
 
 import com.practica_red_social.prac_red_social.exceptions.*;
-import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
-import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
-import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.models.dtos.auths.RegisterRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.ResponseTokenDTO;
+import com.practica_red_social.prac_red_social.models.entities.mysql.TokenEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
-import com.practica_red_social.prac_red_social.services.AuthorizationService;
-import com.practica_red_social.prac_red_social.services.JWTService;
+import com.practica_red_social.prac_red_social.services.auths.AuthorizationService;
+import com.practica_red_social.prac_red_social.services.auths.JWTService;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;

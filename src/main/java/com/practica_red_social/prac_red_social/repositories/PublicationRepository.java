@@ -1,9 +1,9 @@
 package com.practica_red_social.prac_red_social.repositories;
 
-import com.practica_red_social.prac_red_social.models.entities.PublicationEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.practica_red_social.prac_red_social.models.entities.mongodb.PublicationDocument;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PublicationRepository extends JpaRepository<PublicationEntity, Long> {
+public interface PublicationRepository extends MongoRepository<PublicationDocument, String> {
 }

@@ -2,14 +2,14 @@ package com.practica_red_social.prac_red_social.servicesTests.unitTests;
 
 
 import com.practica_red_social.prac_red_social.configs.EncryptConfig;
-import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
-import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.models.dtos.auths.LoginRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.RegisterRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.ResponseTokenDTO;
+import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
-import com.practica_red_social.prac_red_social.services.AuthorizationService;
-import com.practica_red_social.prac_red_social.services.JWTService;
+import com.practica_red_social.prac_red_social.services.auths.AuthorizationService;
+import com.practica_red_social.prac_red_social.services.auths.JWTService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

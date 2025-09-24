@@ -1,14 +1,13 @@
 package com.practica_red_social.prac_red_social.configs;
 
 import com.practica_red_social.prac_red_social.exceptions.*;
-import com.practica_red_social.prac_red_social.services.JWTService;
+import com.practica_red_social.prac_red_social.services.auths.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -62,7 +61,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        System.out.println("Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        System.out.println(request);
+        System.out.println(response);
 
 
         filterChain.doFilter(request, response);

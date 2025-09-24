@@ -1,0 +1,50 @@
+package com.practica_red_social.prac_red_social.models.entities.mongodb;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@Document(collection="publications")
+public class PublicationDocument {
+    @Id
+    private String id;
+
+    @NotNull
+    private String message;
+
+    @Min(0)
+    @NotNull
+    private int likes = 0;
+
+    @Email
+    @Indexed
+    @NotNull
+    private String userEmailDueño;
+
+    @NotNull
+    private String usernameDueño;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
+
+    private List<Comments> comentarios = new ArrayList<Comments>();
+
+}

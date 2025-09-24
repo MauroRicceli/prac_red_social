@@ -1,10 +1,9 @@
 package com.practica_red_social.prac_red_social.configs;
 
 import com.practica_red_social.prac_red_social.exceptions.InvalidTokenType;
-import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
-import com.practica_red_social.prac_red_social.services.JWTService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

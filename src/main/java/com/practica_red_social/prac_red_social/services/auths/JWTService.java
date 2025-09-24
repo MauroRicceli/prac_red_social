@@ -1,8 +1,8 @@
-package com.practica_red_social.prac_red_social.services;
+package com.practica_red_social.prac_red_social.services.auths;
 
 import com.practica_red_social.prac_red_social.exceptions.*;
-import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
-import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.TokenEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.TokenRepository;
 import com.practica_red_social.prac_red_social.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -10,7 +10,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -109,6 +108,18 @@ public class JWTService {
     private String extractTokenType(String token){
         Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
         return jwtToken.get("type", String.class);
+    }
+
+    /**
+     * Obtiene el nombre de usuario del token // NO EL MAIL // NO EL IDENTIFICADOR DEL TOKEN
+     *
+     * @param token Token enviado
+     * @return String user del token
+     */
+
+    public String extractTokenNonIdentifierName(String token){
+        Claims jwtToken = Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
+        return jwtToken.get("name", String.class);
     }
 
     /**

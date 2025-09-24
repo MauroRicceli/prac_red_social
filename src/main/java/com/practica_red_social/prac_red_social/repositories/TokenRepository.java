@@ -1,7 +1,7 @@
 package com.practica_red_social.prac_red_social.repositories;
 
-import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
-import com.practica_red_social.prac_red_social.models.entities.UserEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.TokenEntity;
+import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

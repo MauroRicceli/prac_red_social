@@ -3,11 +3,13 @@ package com.practica_red_social.prac_red_social;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@EnableMongoAuditing
 @SpringBootApplication
 public class PracRedSocialApplication {
 

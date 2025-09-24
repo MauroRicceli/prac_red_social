@@ -1,14 +1,11 @@
 package com.practica_red_social.prac_red_social.controllers;
 
-import com.practica_red_social.prac_red_social.models.dtos.LoginRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.LogoutDTO;
-import com.practica_red_social.prac_red_social.models.dtos.RegisterRequestDTO;
-import com.practica_red_social.prac_red_social.models.dtos.ResponseTokenDTO;
-import com.practica_red_social.prac_red_social.models.entities.TokenEntity;
-import com.practica_red_social.prac_red_social.services.AuthorizationService;
+import com.practica_red_social.prac_red_social.models.dtos.auths.LoginRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.LogoutDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.RegisterRequestDTO;
+import com.practica_red_social.prac_red_social.models.dtos.auths.ResponseTokenDTO;
+import com.practica_red_social.prac_red_social.services.auths.AuthorizationService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
