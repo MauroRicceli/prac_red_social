@@ -3,6 +3,14 @@
 # ============================
 FROM maven:3.9.9-eclipse-temurin-17 AS builder
 
+ARG DB_URL
+ARG DB_ROOT_USERNAME
+ARG DB_ROOT_PASSWORD
+ARG SECURITY_PASSWORD
+ARG SECURITY_JWT_SECRET_KEY
+ARG TIME_EXPIRATION_TOKEN
+ARG TIME_REFRESH_TOKEN
+
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
