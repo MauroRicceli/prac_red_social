@@ -26,11 +26,3 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/prac_red_social:latest
-          build-args: |
-            DB_URL=${{secrets.DB_URL}}
-            DB_ROOT_USERNAME=${{secrets.DB_ROOT_USERNAME}}
-            DB_ROOT_PASSWORD=${{secrets.DB_ROOT_PASSWORD}}
-            SECURITY_PASSWORD=${{secrets.SECURITY_PASSWORD}}
-            SECURITY_JWT_SECRET_KEY=${{secrets.SECURITY_JWT_SECRET_KEY}}
-            TIME_EXPIRATION_TOKEN=${{secrets.TIME_EXPIRATION_TOKEN}}
-            TIME_REFRESH_TOKEN=${{secrets.TIME_REFRESH_TOKEN}}
