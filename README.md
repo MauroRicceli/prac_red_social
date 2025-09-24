@@ -3,7 +3,7 @@
 
 
 
-Una mini red social desarrollada con Spring Boot, Spring Security JWT, Spring Data JPA/Hibernate y una arquitectura moderna para despliegue con Docker y Render.
+Una mini red social desarrollada con Spring Boot, Spring Security JWT, Spring Data JPA/Hibernate/MongoDB y una arquitectura moderna para despliegue con Docker y Render.
 Permite a los usuarios registrarse, iniciar sesión, interactuar con publicaciones, gestionar amistades y manejar tokens de autenticación. (A ampliar funcionalidades)
 
 ## ✨ Características
@@ -20,11 +20,11 @@ Permite a los usuarios registrarse, iniciar sesión, interactuar con publicacion
 
 ## 🛠 Tecnologías
 
-Backend: Java 17+, Spring Boot, Spring Data JPA, Hibernate
+Backend: Java 17+, Spring Boot, Spring Data JPA, Hibernate, MongoDB
 
 Seguridad: Spring Security, JWT
 
-Base de datos: MySQL local (desarrollo) / MySQL AWS Cloud (producción)
+Base de datos: MySQL y MongodB local (desarrollo)  / MySQL AWS Cloud (producción)
 
 Testing: JUnit, Mockito, Postman
 
