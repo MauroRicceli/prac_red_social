@@ -11,12 +11,12 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AddFriendDTO {
+public class ModifyFriendDTO {
 
     @Email
     @NotNull
     private String email_Amigo;
 
-    private Instant addedWhen;
+    private Instant modifyWhen;
 
 }

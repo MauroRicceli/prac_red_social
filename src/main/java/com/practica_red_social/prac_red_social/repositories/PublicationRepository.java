@@ -6,4 +6,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PublicationRepository extends MongoRepository<PublicationDocument, String> {
+    /**
+     * Elimina la publicacion con ese ID.
+     * @param id
+     * @return devuelve la cantidad de documentos que haya borrado.
+     */
+    long deleteByid(String id);
 }

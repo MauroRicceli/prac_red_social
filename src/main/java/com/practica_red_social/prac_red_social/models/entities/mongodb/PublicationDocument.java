@@ -12,7 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,6 +47,6 @@ public class PublicationDocument {
     @LastModifiedDate
     private Instant updatedAt;
 
-    private List<Comments> comentarios = new ArrayList<Comments>();
+    private Set<Comments> comentarios = new HashSet<Comments>();
 
 }
