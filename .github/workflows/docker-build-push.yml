@@ -25,7 +25,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: user/app:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/prac_red_social:latest
           build-args: |
             DB_URL=${{secrets.DB_URL}}
             DB_ROOT_USERNAME=${{secrets.DB_ROOT_USERNAME}}
