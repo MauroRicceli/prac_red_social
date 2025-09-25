@@ -3,10 +3,7 @@ package com.practica_red_social.prac_red_social.services;
 import com.practica_red_social.prac_red_social.exceptions.*;
 import com.practica_red_social.prac_red_social.models.auxiliar.Tupla;
 import com.practica_red_social.prac_red_social.models.dtos.*;
-import com.practica_red_social.prac_red_social.models.entities.mongodb.Friend;
-import com.practica_red_social.prac_red_social.models.entities.mongodb.FriendsDocument;
-import com.practica_red_social.prac_red_social.models.entities.mongodb.Liked;
-import com.practica_red_social.prac_red_social.models.entities.mongodb.PublicationDocument;
+import com.practica_red_social.prac_red_social.models.entities.mongodb.*;
 import com.practica_red_social.prac_red_social.models.entities.mysql.UserEntity;
 import com.practica_red_social.prac_red_social.repositories.FriendshipRepository;
 import com.practica_red_social.prac_red_social.repositories.PublicationRepository;
@@ -164,7 +161,7 @@ public class UserActivitiesService {
         return PublicationCreateResponseDTO.builder()
                 .likes(publication.getLikes())
                 .createdAt(publication.getCreatedAt())
-                .comentarios(publication.getComentarios())
+                .comentarios(publication.getReplies())
                 .message(publicationDTO.getMessage())
                 .updatedAt(publication.getUpdatedAt())
                 .userEmailDueño(publication.getUserEmailDueño())
@@ -242,6 +239,48 @@ public class UserActivitiesService {
         likedPublicationDTO.setActionPerformed(LikedPublicationDTO.Action.LIKED);
         likedPublicationDTO.setWhenLiked(nuevoLike.getWhenLiked());
         return likedPublicationDTO;
+
+    }
+
+    public CommentPublicationDTO commentPublication(String auth, CommentPublicationDTO commentPublicationDTO){
+        String token = auth.substring(7);
+        Tupla<String, String> datosUsuario = new Tupla<String,String>(jwtService.extractTokenUsername(token), jwtService.extractTokenNonIdentifierName(token));
+
+        PublicationDocument publicationRespondedTo = verifyPublicationExistenceAndGetIt(commentPublicationDTO.getIdPublicationRespondedTo());
+
+        Comments comment = Comments.builder().
+                comment(commentPublicationDTO.getComment())
+                .createdAt(Instant.now()).replies(new HashSet<Comments>())
+                .userEmail(datosUsuario.getObjeto1()).
+                username(datosUsuario.getObjeto2())
+                .build();
+
+        if(commentPublicationDTO.getIdCommentOfPublicationRespondedTo() == null){
+
+            if(!publicationRespondedTo.getReplies().add(comment)){
+                throw new PublicationAlreadyHadTheComment("La publicacion ya tiene ese comentario exacto");
+            } else {
+
+                publicationRepository.save(publicationRespondedTo);
+                commentPublicationDTO.setWhenCommented(comment.getCreatedAt());
+                return commentPublicationDTO;
+            }
+
+        } else {
+
+            for(Comments reply : publicationRespondedTo.getReplies()){
+                if(reply.getIdComentario().equals(commentPublicationDTO.getIdCommentOfPublicationRespondedTo())){
+                    reply.getReplies().add(comment);
+
+                    publicationRepository.save(publicationRespondedTo);
+                    commentPublicationDTO.setWhenCommented(comment.getCreatedAt());
+                    return commentPublicationDTO;
+                }
+            }
+            throw new CommentDontExistsInPublication("La publicacion no tiene ese comentario");
+
+        }
+
 
     }
 }

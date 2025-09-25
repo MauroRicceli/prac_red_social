@@ -17,25 +17,25 @@ public class UserActivitiesController {
     private final UserActivitiesService userActivitiesService;
 
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
-    @PutMapping(value = "/addFriend", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/addFriend", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ModifyFriendDTO> addFriend(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody ModifyFriendDTO friendDTO){
         return new ResponseEntity<>(userActivitiesService.addFriend(auth,friendDTO), HttpStatus.ACCEPTED);
     }
 
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
-    @PutMapping(value="/removeFriend", consumes = "application/json", produces = "application/json")
+    @DeleteMapping(value="/removeFriend", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ModifyFriendDTO> removeFriend(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody ModifyFriendDTO friendDTO){
         return new ResponseEntity<>(userActivitiesService.removeFriend(auth,friendDTO), HttpStatus.ACCEPTED);
     }
 
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
-    @PutMapping(value="/createPublication", consumes = "application/json", produces = "application/json")
+    @PostMapping(value="/createPublication", consumes = "application/json", produces = "application/json")
     public ResponseEntity<PublicationCreateResponseDTO> createPublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody PublicationCreateDTO publicationDTO){
         return new ResponseEntity<>(userActivitiesService.createPublication(auth, publicationDTO), HttpStatus.ACCEPTED);
     }
 
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
-    @PutMapping(value="/removePublication", consumes = "application/json", produces = "application/json")
+    @DeleteMapping(value="/removePublication", consumes = "application/json", produces = "application/json")
     public ResponseEntity<PublicationRemoveDTO> removePublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody PublicationRemoveDTO publicationRemoveDTO){
         return new ResponseEntity<>(userActivitiesService.removePublication(auth, publicationRemoveDTO), HttpStatus.ACCEPTED);
     }
@@ -47,13 +47,20 @@ public class UserActivitiesController {
     }
 
     /**
-     * Si la publicacion ya tenia un like lo quita, y si no lo tenia lo agrega.
+     * Si la publicacion ya tenia un like lo quita, y si no lo tenia lo agrega (siempre y cuando el like sea de la persona dueña del token)
      * @param likedPublicationDTO
+     * @param auth
      * @return DTO con info or exception si ocurre
      */
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
-    @PutMapping(value="/likePublication", consumes="application/json", produces = "application/json")
+    @PostMapping(value="/likePublication", consumes="application/json", produces = "application/json")
     public ResponseEntity<LikedPublicationDTO> likePublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody LikedPublicationDTO likedPublicationDTO){
         return new ResponseEntity<>(userActivitiesService.manageLikedPublication(auth, likedPublicationDTO), HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
+    @PostMapping(value="/commentPublication", consumes="application/json", produces = "application/json")
+    public ResponseEntity<CommentPublicationDTO> commentPublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody CommentPublicationDTO commentPublicationDTO){
+        return new ResponseEntity<>(userActivitiesService.commentPublication(auth,commentPublicationDTO), HttpStatus.ACCEPTED);
     }
 }

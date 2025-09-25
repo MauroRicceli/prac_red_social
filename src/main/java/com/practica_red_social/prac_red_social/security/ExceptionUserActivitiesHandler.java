@@ -34,4 +34,14 @@ public class ExceptionUserActivitiesHandler {
     public ResponseEntity<String> handlerTokenIdAndLikedIdDoesntMatchs(TokenIdAndLikedIdDoesntMatchs e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(exception = PublicationAlreadyHadTheComment.class)
+    public ResponseEntity<String> handlerPublicationAlreadyHadTheComment(PublicationAlreadyHadTheComment e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(exception = CommentDontExistsInPublication.class)
+    public ResponseEntity<String> handlerCommentDontExistsInPublication(CommentDontExistsInPublication e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
