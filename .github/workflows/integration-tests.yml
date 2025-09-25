@@ -33,6 +33,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Check env
+        run: env | sort
+      
       - name: Show MongoDB envs
         run: |
            echo "URI is $MONGO_URI"
