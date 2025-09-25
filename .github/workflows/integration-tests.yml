@@ -38,6 +38,7 @@ jobs:
            echo "URI is $MONGO_URI"
            echo "Username is $MONGO_ROOT_USER"
            echo "Password is $MONGO_ROOT_PASSWORD"
+           echo "test is $DB_ROOT_USERNAME"
       - name: Run Integration Tests
         run: |
           mvn test -Dtest=com.practica_red_social.prac_red_social.servicesTests.integrationTests.AuthorizationServiceIntegrationTest
