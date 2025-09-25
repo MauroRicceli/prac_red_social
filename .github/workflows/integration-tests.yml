@@ -8,6 +8,7 @@ jobs:
   integration-tests:
     name: Run Integration Tests
     runs-on: ubuntu-latest
+    environment: db_root_username
     permissions:
       contents: write
     env:
