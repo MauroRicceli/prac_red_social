@@ -1,9 +1,6 @@
 package com.practica_red_social.prac_red_social.security;
 
-import com.practica_red_social.prac_red_social.exceptions.AlreadyFriendsException;
-import com.practica_red_social.prac_red_social.exceptions.FriendEmailDontExistsException;
-import com.practica_red_social.prac_red_social.exceptions.NotFriendsAlreadyException;
-import com.practica_red_social.prac_red_social.exceptions.PublicationDoesntExistsException;
+import com.practica_red_social.prac_red_social.exceptions.*;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +27,11 @@ public class ExceptionUserActivitiesHandler {
 
     @ExceptionHandler(exception = PublicationDoesntExistsException.class)
     public ResponseEntity<String> handlerPublicationDoesntExistsException(PublicationDoesntExistsException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(exception = TokenIdAndLikedIdDoesntMatchs.class)
+    public ResponseEntity<String> handlerTokenIdAndLikedIdDoesntMatchs(TokenIdAndLikedIdDoesntMatchs e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

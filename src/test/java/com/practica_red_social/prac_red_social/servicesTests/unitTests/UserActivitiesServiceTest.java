@@ -276,6 +276,8 @@ public class UserActivitiesServiceTest {
     @Test
     @DisplayName("Test manage liked publication valid, LIKE")
     public void testManageLikedPublication(){
+        Mockito.when(jwtService.extractTokenUsername("tokendeprueba")).thenReturn("testLike@gmail.com");
+
         LikedPublicationDTO likedPublicationDTO = LikedPublicationDTO.builder()
                 .idPublication("idDePrueba")
                 .usernameLiked("testLike")
@@ -293,7 +295,7 @@ public class UserActivitiesServiceTest {
 
         Mockito.when(publicationRepository.findById("idDePrueba")).thenReturn(Optional.of(publication));
 
-        LikedPublicationDTO ret = userActivitiesService.manageLikedPublication(likedPublicationDTO);
+        LikedPublicationDTO ret = userActivitiesService.manageLikedPublication("Bearer tokendeprueba",likedPublicationDTO);
 
         likedPublicationDTO.setWhenLiked(ret.getWhenLiked());
 
@@ -304,6 +306,8 @@ public class UserActivitiesServiceTest {
     @Test
     @DisplayName("Test manage liked publication valid, UNLIKE")
     public void testManageUnlikedPublication(){
+        Mockito.when(jwtService.extractTokenUsername("tokendeprueba")).thenReturn("testLike@gmail.com");
+
         LikedPublicationDTO likedPublicationDTO = LikedPublicationDTO.builder()
                 .idPublication("idDePrueba")
                 .usernameLiked("testLike")
@@ -323,7 +327,7 @@ public class UserActivitiesServiceTest {
 
         Mockito.when(publicationRepository.findById("idDePrueba")).thenReturn(Optional.of(publication));
 
-        LikedPublicationDTO ret = userActivitiesService.manageLikedPublication(likedPublicationDTO);
+        LikedPublicationDTO ret = userActivitiesService.manageLikedPublication("Bearer tokendeprueba", likedPublicationDTO);
 
         likedPublicationDTO.setWhenLiked(ret.getWhenLiked());
 

@@ -1,9 +1,6 @@
 package com.practica_red_social.prac_red_social.services;
 
-import com.practica_red_social.prac_red_social.exceptions.AlreadyFriendsException;
-import com.practica_red_social.prac_red_social.exceptions.FriendEmailDontExistsException;
-import com.practica_red_social.prac_red_social.exceptions.NotFriendsAlreadyException;
-import com.practica_red_social.prac_red_social.exceptions.PublicationDoesntExistsException;
+import com.practica_red_social.prac_red_social.exceptions.*;
 import com.practica_red_social.prac_red_social.models.auxiliar.Tupla;
 import com.practica_red_social.prac_red_social.models.dtos.*;
 import com.practica_red_social.prac_red_social.models.entities.mongodb.Friend;
@@ -215,7 +212,13 @@ public class UserActivitiesService {
         return modifiedPublicationDTO;
     }
 
-    public LikedPublicationDTO manageLikedPublication(LikedPublicationDTO likedPublicationDTO){
+    public LikedPublicationDTO manageLikedPublication(String auth, LikedPublicationDTO likedPublicationDTO){
+
+        String token = auth.substring(7);
+
+        if(!jwtService.extractTokenUsername(token).equals(likedPublicationDTO.getUserEmailLiked())){
+            throw new TokenIdAndLikedIdDoesntMatchs("El dueño del token y el usuario que da el like no son el mismo");
+        }
 
         PublicationDocument publication = verifyPublicationExistenceAndGetIt(likedPublicationDTO.getIdPublication());
 

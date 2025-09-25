@@ -53,7 +53,7 @@ public class UserActivitiesController {
      */
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
     @PutMapping(value="/likePublication", consumes="application/json", produces = "application/json")
-    public ResponseEntity<LikedPublicationDTO> likePublication(@RequestBody LikedPublicationDTO likedPublicationDTO){
-        return new ResponseEntity<>(userActivitiesService.manageLikedPublication(likedPublicationDTO), HttpStatus.ACCEPTED);
+    public ResponseEntity<LikedPublicationDTO> likePublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody LikedPublicationDTO likedPublicationDTO){
+        return new ResponseEntity<>(userActivitiesService.manageLikedPublication(auth, likedPublicationDTO), HttpStatus.ACCEPTED);
     }
 }
