@@ -18,7 +18,7 @@ jobs:
       SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
       TIME_EXPIRATION_TOKEN: ${{ secrets.TIME_EXPIRATION_TOKEN }}
       TIME_REFRESH_TOKEN: ${{ secrets.TIME_REFRESH_TOKEN }}
-      MONGO_DATABASE: ${ {secrets.MONGO_DATABASE }}
+      MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
       MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
       MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
       MONGO_URI: ${{ secrets.MONGO_URI }}
