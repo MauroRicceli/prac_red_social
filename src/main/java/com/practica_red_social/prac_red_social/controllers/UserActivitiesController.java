@@ -48,13 +48,12 @@ public class UserActivitiesController {
 
     /**
      * Si la publicacion ya tenia un like lo quita, y si no lo tenia lo agrega.
-     * @param auth
      * @param likedPublicationDTO
      * @return DTO con info or exception si ocurre
      */
     @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
     @PutMapping(value="/likePublication", consumes="application/json", produces = "application/json")
-    public ResponseEntity<LikedPublicationDTO> likePublication(@RequestHeader(HttpHeaders.AUTHORIZATION)String auth, @RequestBody LikedPublicationDTO likedPublicationDTO){
-        return new ResponseEntity<>(userActivitiesService.manageLikedPublication(auth, likedPublicationDTO), HttpStatus.ACCEPTED);
+    public ResponseEntity<LikedPublicationDTO> likePublication(@RequestBody LikedPublicationDTO likedPublicationDTO){
+        return new ResponseEntity<>(userActivitiesService.manageLikedPublication(likedPublicationDTO), HttpStatus.ACCEPTED);
     }
 }

@@ -49,12 +49,22 @@ public class UserActivitiesService {
      * Verifica si la publiacion existe por ID
      *
      * @param id de la publicacion
+     * @throws PublicationDoesntExistsException si la publicacion que se quiere verificar y obtener no existe
      * @return PublicationDocument si existe, PublicationDoesntExistsException si no.
      */
     private PublicationDocument verifyPublicationExistenceAndGetIt(String id){
         return publicationRepository.findById(id).orElseThrow(() -> new PublicationDoesntExistsException("La publicacion no existe"));
     }
 
+    /**
+     * Agrega un nuevo amigo al usuario poseedor del token siempre que no lo sean anteriormente entre ellos y el usuario exista.
+     * Si es su primer amigo crea el documento.
+     * @param header
+     * @param friendDTO
+     * @throws FriendEmailDontExistsException si el usuario que se quiere añadir de amigo no existe
+     * @throws AlreadyFriendsException si los usuarios ya son amigos
+     * @return ModifyFriendDTO con informacion
+     */
     public ModifyFriendDTO addFriend(String header, ModifyFriendDTO friendDTO){
         String token = header.substring(7);
         Tupla<String,String> datosUsuarioToken = new Tupla<>(jwtService.extractTokenUsername(token), jwtService.extractTokenNonIdentifierName(token));
@@ -100,6 +110,14 @@ public class UserActivitiesService {
         return friendDTO;
     }
 
+    /**
+     * Elimina al amigo del poseedor del token siempre que exista y sean amigos.
+     * @param header
+     * @param friendDTO
+     * @throws FriendEmailDontExistsException si el email del usuario que se quiere eliminar la amistad no existe
+     * @throws NotFriendsAlreadyException si los usuarios no son amigos entre sí y se intentan eliminar
+     * @return ModifyFriendDTO con información util
+     */
     public ModifyFriendDTO removeFriend(String header, ModifyFriendDTO friendDTO){
         String token = header.substring(7);
 
@@ -128,6 +146,12 @@ public class UserActivitiesService {
 
     }
 
+    /**
+     * Crea una publicacion para el usuario poseedor del token
+     * @param auth
+     * @param publicationDTO
+     * @return PublicationCreateResponseDTO con informacion util
+     */
     public PublicationCreateResponseDTO createPublication(String auth, PublicationCreateDTO publicationDTO){
         String token = auth.substring(7);
         Tupla<String, String> datosUsuario = new Tupla<String,String>(jwtService.extractTokenUsername(token), jwtService.extractTokenNonIdentifierName(token));
@@ -152,6 +176,13 @@ public class UserActivitiesService {
                 .build();
     }
 
+    /**
+     * Elimina la publicacion enviada siempre y cuando exista y sea de propiedad del usuario enviado por el token
+     * @param auth
+     * @param publicationRemoveDTO
+     * @throws PublicationDoesntExistsException si no existe la publicacion que se quiere borrar, o si no es de su propiedad
+     * @return PublicationRemoveDTO con información util
+     */
     public PublicationRemoveDTO removePublication(String auth, PublicationRemoveDTO publicationRemoveDTO){
         String token = auth.substring(7);
 
@@ -184,7 +215,7 @@ public class UserActivitiesService {
         return modifiedPublicationDTO;
     }
 
-    public LikedPublicationDTO manageLikedPublication(String auth, LikedPublicationDTO likedPublicationDTO){
+    public LikedPublicationDTO manageLikedPublication(LikedPublicationDTO likedPublicationDTO){
 
         PublicationDocument publication = verifyPublicationExistenceAndGetIt(likedPublicationDTO.getIdPublication());
 
