@@ -253,6 +253,7 @@ public class UserActivitiesService {
                 .createdAt(Instant.now()).replies(new HashSet<Comments>())
                 .userEmail(datosUsuario.getObjeto1()).
                 username(datosUsuario.getObjeto2())
+                .idComentario(UUID.randomUUID().toString())
                 .build();
 
         if(commentPublicationDTO.getIdCommentOfPublicationRespondedTo() == null){
@@ -263,6 +264,7 @@ public class UserActivitiesService {
 
                 publicationRepository.save(publicationRespondedTo);
                 commentPublicationDTO.setWhenCommented(comment.getCreatedAt());
+                commentPublicationDTO.setIdGeneratedForThisComment(comment.getIdComentario());
                 return commentPublicationDTO;
             }
 
@@ -274,6 +276,7 @@ public class UserActivitiesService {
 
                     publicationRepository.save(publicationRespondedTo);
                     commentPublicationDTO.setWhenCommented(comment.getCreatedAt());
+                    commentPublicationDTO.setIdGeneratedForThisComment(comment.getIdComentario());
                     return commentPublicationDTO;
                 }
             }
@@ -282,5 +285,70 @@ public class UserActivitiesService {
         }
 
 
+    }
+
+    public RemoveCommentPublicationDTO removeCommentFromPublication(String auth, RemoveCommentPublicationDTO removeCommentPublicationDTO){
+        String token = auth.substring(7);
+
+        PublicationDocument publicationRespondedTo = verifyPublicationExistenceAndGetIt(removeCommentPublicationDTO.getIdPublication());
+
+        if(removeCommentPublicationDTO.getIdCommentToParentCommentInPublication() == null){
+
+            if(!publicationRespondedTo.getReplies().removeIf(reply -> reply.getIdComentario().equals(removeCommentPublicationDTO.getIdComment()))){
+                throw new CommentDontExistsInPublication("El comentario no existe en la publicacion");
+            }
+
+            publicationRepository.save(publicationRespondedTo);
+            removeCommentPublicationDTO.setWhenDeleted(Instant.now());
+            return removeCommentPublicationDTO;
+
+        } else {
+
+            //obtengo el comentario padre con ese id
+            Optional<Comments> fatherReply = publicationRespondedTo.getReplies().stream()
+                    .filter(parentReply -> parentReply.getIdComentario().equals(removeCommentPublicationDTO.getIdComment()))
+                    .findFirst();
+
+            if(fatherReply.isEmpty()){
+                throw new CommentDontExistsInPublication("El comentario padre no existe en la publicacion");
+            }
+
+            if(fatherReply.get().getReplies().removeIf(childReply -> childReply.getIdComentario().equals(removeCommentPublicationDTO.getIdCommentToParentCommentInPublication()))){
+
+                //sobreescribo en la db el comentario. para aplicar los cambios
+                publicationRespondedTo.getReplies().remove(fatherReply.get());
+                publicationRespondedTo.getReplies().add(fatherReply.get());
+
+                publicationRepository.save(publicationRespondedTo);
+                removeCommentPublicationDTO.setWhenDeleted(Instant.now());
+                return removeCommentPublicationDTO;
+            }
+
+            throw new CommentDontExistsInPublication("El comentario hijo anidado no existe en la publicacion");
+
+        }
+
+    }
+
+    public List<PublicationCreateResponseDTO> getAllPublications(){
+        List<PublicationDocument> publications = publicationRepository.findAll();
+        List<PublicationCreateResponseDTO> publicationsDTO = new ArrayList<PublicationCreateResponseDTO>();
+
+        for(PublicationDocument publication : publications){
+
+            publicationsDTO.add(PublicationCreateResponseDTO.builder()
+                    .id(publication.getId())
+                    .createdAt(publication.getCreatedAt())
+                    .updatedAt(publication.getUpdatedAt())
+                    .usernameDueño(publication.getUsernameDueño())
+                    .userEmailDueño(publication.getUserEmailDueño())
+                    .message(publication.getMessage())
+                    .likes(publication.getLikes())
+                    .comentarios(publication.getReplies())
+                    .build());
+
+        }
+
+        return publicationsDTO;
     }
 }

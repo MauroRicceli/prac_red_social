@@ -25,4 +25,5 @@ public class CommentPublicationDTO {
     private String idCommentOfPublicationRespondedTo;
 
     private Instant whenCommented;
+    private String idGeneratedForThisComment;
 }

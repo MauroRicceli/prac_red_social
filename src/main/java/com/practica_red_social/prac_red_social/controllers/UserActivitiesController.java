@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
@@ -62,5 +64,17 @@ public class UserActivitiesController {
     @PostMapping(value="/commentPublication", consumes="application/json", produces = "application/json")
     public ResponseEntity<CommentPublicationDTO> commentPublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody CommentPublicationDTO commentPublicationDTO){
         return new ResponseEntity<>(userActivitiesService.commentPublication(auth,commentPublicationDTO), HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasAnyRole('STANDARD', 'ADMIN')")
+    @DeleteMapping(value="/removeCommentPublication", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<RemoveCommentPublicationDTO> removeCommentPublication(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody RemoveCommentPublicationDTO removeCommentPublicationDTO){
+        return new ResponseEntity<>(userActivitiesService.removeCommentFromPublication(auth, removeCommentPublicationDTO), HttpStatus.ACCEPTED);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value="/getAllPublications", produces = "application/json")
+    public ResponseEntity<List<PublicationCreateResponseDTO>> getAllPublications(){
+        return new ResponseEntity<>(userActivitiesService.getAllPublications(), HttpStatus.ACCEPTED);
     }
 }

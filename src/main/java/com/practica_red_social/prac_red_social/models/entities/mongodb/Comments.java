@@ -5,20 +5,22 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.Instant;
 import java.util.*;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comments {
 
+    @MongoId
     @NotNull
-    private String idComentario = UUID.randomUUID().toString();
+    private String idComentario;
 
     @NotNull
     @Email
