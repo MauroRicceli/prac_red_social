@@ -1,6 +1,6 @@
 # 🌐 Mini Red Social
 
-Una mini red social desarrollada con Spring Boot, Spring Security JWT, Spring Data JPA/Hibernate/MongoDB y una arquitectura moderna para despliegue con Docker y Render.
+Una mini red social desarrollada en Java con el framework Spring Boot, utilizando Spring Security JWT, Spring Data JPA/Hibernate/MongoDB y una arquitectura moderna para despliegue con Docker y Render.
 Permite a los usuarios registrarse, iniciar sesión, interactuar con publicaciones, gestionar amistades y manejar tokens de autenticación.
 ## ✨ Características
 
