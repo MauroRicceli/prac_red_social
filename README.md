@@ -73,14 +73,14 @@ DELETE /api/user/removeCommentPublication - Eliminar comentario propio (requiere
 ## 🏗 Arquitectura
 El sistema utiliza una arquitectura híbrida que aprovecha las fortalezas de cada tipo de base de datos:
 
-## MySQL - Datos transaccionales críticos:
+### MySQL - Datos transaccionales críticos:
 
-### Usuarios y autenticación
+Usuarios y autenticación
 Tokens de sesión
 
 Relaciones que requieren consistencia ACID
 
-## MongoDB - Datos de interacción social:
+### MongoDB - Datos de interacción social:
 
 Publicaciones con contenido flexible
 
